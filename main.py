@@ -4,10 +4,22 @@ Monitors cryptocurrency prices and sends notifications when conditions are met.
 """
 
 import os
+import sys
 import time
 from dotenv import load_dotenv
 from exchange_api import get_current_price
 from notification import send_notification
+
+# Fix Windows console encoding for emojis
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except (AttributeError, ValueError):
+        # Fallback for older Python versions
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 # Load environment variables
 load_dotenv()
