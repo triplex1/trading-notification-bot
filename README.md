@@ -9,6 +9,9 @@ A Python bot that monitors cryptocurrency prices and sends notifications when pr
 - ⚙️ Configurable price thresholds
 - 🔄 Automatic retry on errors
 - 📈 Price change tracking
+- 🎯 **Supremo All-In-One Strategy Integration** - Advanced algorithmic trading with webhook support
+- 📡 **TradingView Webhook Server** - Receive and process alerts from TradingView
+- 💰 **Risk Management** - Automatic position sizing based on 1% risk per trade
 
 ## Setup
 
@@ -55,6 +58,8 @@ Edit `.env` with your configuration:
 
 ## Usage
 
+### Basic Price Monitoring
+
 ```bash
 # Activate virtual environment
 venv\Scripts\activate
@@ -70,7 +75,27 @@ The bot will:
 
 Press `Ctrl+C` to stop the bot.
 
+### Supremo Strategy with TradingView Webhooks
+
+```bash
+# Activate virtual environment
+venv\Scripts\activate
+
+# Run webhook server for TradingView alerts
+python webhook_server.py
+```
+
+Or run integrated mode (webhook + price monitor):
+
+```bash
+python supremo_integrated.py
+```
+
+**See [SUPREMO_SETUP.md](SUPREMO_SETUP.md) for complete setup instructions.**
+
 ## Configuration Options
+
+### Basic Price Monitoring
 
 | Variable | Description | Example |
 |----------|-------------|---------|
@@ -80,16 +105,56 @@ Press `Ctrl+C` to stop the bot.
 | `PRICE_THRESHOLD_BELOW` | Alert when price goes below this | `45000` |
 | `CHECK_INTERVAL` | Seconds between price checks | `60` |
 
+### Supremo Strategy
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `RISK_PER_TRADE` | Percentage of equity to risk per trade | `1.0` (1%) |
+| `TOTAL_EQUITY` | Total trading equity | `10000` |
+| `ATR_PERIOD` | ATR calculation period | `14` |
+| `ATR_MULTIPLIER` | ATR multiplier for stop loss | `1.0` |
+| `FIXED_SL_PERCENT` | Fixed SL % (0 = use ATR) | `0` |
+| `WEBHOOK_PORT` | Port for webhook server | `5000` |
+| `WEBHOOK_HOST` | Host for webhook server | `0.0.0.0` |
+| `WEBHOOK_SECRET` | Optional secret for webhook security | `your_secret` |
+| `ENABLE_WEBHOOK` | Enable webhook server in integrated mode | `true` |
+| `ENABLE_MONITOR` | Enable price monitor in integrated mode | `false` |
+
 ## Supported Exchanges
 
 - **Binance**: Use symbols like `BTCUSDT`, `ETHUSDT`
 - **Coinbase**: Use symbols like `BTC-USD`, `ETH-USD`
+
+## Advanced Features
+
+### Supremo All-In-One Strategy
+
+The bot includes a complete implementation of the Supremo All-In-One trading strategy:
+
+- **Trend Filter**: EMA 50/200 based trend detection
+- **Entry Zones**: Monday Low/High, Weekly Open, Previous Week High
+- **Take Profit**: Automatic TP1/TP2 calculation
+- **Stop Loss**: ATR-based or fixed percentage
+- **Risk Management**: 1% risk per trade with automatic position sizing
+- **Deduplication**: Prevents duplicate signals within 15-minute windows
+
+**Full documentation**: See [SUPREMO_SETUP.md](SUPREMO_SETUP.md)
+
+### TradingView Integration
+
+Connect your TradingView alerts to the bot via webhook:
+
+1. Set up webhook server: `python webhook_server.py`
+2. Configure TradingView alerts with webhook URL
+3. Receive and process signals automatically
 
 ## Troubleshooting
 
 - **No notifications sent**: Check that at least one notification method is properly configured in `.env`
 - **API errors**: Verify your internet connection and that the exchange API is accessible
 - **Import errors**: Make sure virtual environment is activated and dependencies are installed
+- **Webhook not receiving signals**: Check server is running, verify TradingView webhook URL, check firewall settings
+- **Duplicate signals**: Signals within 15-minute windows are automatically deduplicated
 
 ## License
 

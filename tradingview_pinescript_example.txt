@@ -1,0 +1,73 @@
+// ============================================================================
+// SUPREMO ALL-IN-ONE STRATEGY - TRADINGVIEW PINE SCRIPT EXAMPLE
+// ============================================================================
+// Add this to your existing Supremo script to enable webhook alerts
+// ============================================================================
+
+// ============================================================================
+// ALERT CONDITIONS
+// ============================================================================
+
+// Trend Filter Logic
+isBullish = close > emlive1 and emlive1 > emlive2
+isBearish = close < emlive1 and emlive1 < emlive2
+
+// Long Entry Conditions
+longEntryML = close <= mondayLow and isBullish
+longEntryWO = close <= weeklyOpen and isBullish
+
+// Short Entry Conditions
+shortEntryMH = close >= mondayHigh and isBearish
+shortEntryPWH = close >= prevWeekHigh and isBearish
+
+// ============================================================================
+// WEBHOOK ALERT CONDITIONS
+// ============================================================================
+
+// Long Entry at Monday Low
+alertcondition(
+    longEntryML, 
+    title="Supremo Buy ML", 
+    message='{"ticker": "{{ticker}}", "action": "buy", "price": "{{close}}", "sl": "' + str.tostring(mondayLow) + '", "tp": "' + str.tostring(mondayMid) + '", "trend_bias": "bullish", "timestamp": "{{timenow}}", "entry_level": "ML", "atr": "' + str.tostring(ta.atr(14)) + '"}'
+)
+
+// Long Entry at Weekly Open
+alertcondition(
+    longEntryWO, 
+    title="Supremo Buy WO", 
+    message='{"ticker": "{{ticker}}", "action": "buy", "price": "{{close}}", "sl": "' + str.tostring(weeklyOpen) + '", "tp": "' + str.tostring(mondayMid) + '", "trend_bias": "bullish", "timestamp": "{{timenow}}", "entry_level": "WO", "atr": "' + str.tostring(ta.atr(14)) + '"}'
+)
+
+// Short Entry at Monday High
+alertcondition(
+    shortEntryMH, 
+    title="Supremo Sell MH", 
+    message='{"ticker": "{{ticker}}", "action": "sell", "price": "{{close}}", "sl": "' + str.tostring(mondayHigh) + '", "tp": "' + str.tostring(mondayMid) + '", "trend_bias": "bearish", "timestamp": "{{timenow}}", "entry_level": "MH", "atr": "' + str.tostring(ta.atr(14)) + '"}'
+)
+
+// Short Entry at Previous Week High
+alertcondition(
+    shortEntryPWH, 
+    title="Supremo Sell PWH", 
+    message='{"ticker": "{{ticker}}", "action": "sell", "price": "{{close}}", "sl": "' + str.tostring(prevWeekHigh) + '", "tp": "' + str.tostring(mondayHigh) + '", "trend_bias": "bearish", "timestamp": "{{timenow}}", "entry_level": "PWH", "atr": "' + str.tostring(ta.atr(14)) + '"}'
+)
+
+// ============================================================================
+// ALTERNATIVE: SIMPLE FORMAT (If JSON doesn't work in your TradingView plan)
+// ============================================================================
+
+// Use pipe-separated format instead:
+// alertcondition(longEntryML, title="Supremo Buy ML", message="{{ticker}}|buy|{{close}}|" + str.tostring(mondayLow) + "|" + str.tostring(mondayMid) + "|bullish|{{timenow}}|ML")
+
+// ============================================================================
+// SETUP INSTRUCTIONS
+// ============================================================================
+// 1. Add the above alert conditions to your Supremo script
+// 2. In TradingView, create an alert and select one of the conditions
+// 3. In the alert settings:
+//    - Enable "Webhook URL"
+//    - Enter: http://your-server:5000/webhook
+//    - Use the message format from the alertcondition above
+// 4. Save and enable the alert
+// ============================================================================
+
